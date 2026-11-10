@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phylum Platyhelminthes — Seminar by Agastiya K V (11-B)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Montserrat, Plus Jakarta Sans & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&family=Montserrat:wght@700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-charcoal: #303030;
+      --bg-darker: #242424;
+      --ink-black: #1E1E1E;
+      --hornette-yellow: #F5C731;
+      --warm-cream: #F6F4EE;
+      --coral-red: #E05A47;
+      --font-display: 'Montserrat', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-charcoal);
+      font-family: var(--font-body);
+      color: #FFFFFF;
+    }
+
+    .font-display { font-family: var(--font-display); }
+    .font-mono-tech { font-family: var(--font-mono); }
+
+    /* 100vw x 100vh Locked Viewport Deck */
+    .deck-viewport {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 10;
+    }
+
+    /* Sequential Point-by-Point Drop-In Animation Controlled by JS */
+    .anim-card {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.52s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.52s cubic-bezier(0.22, 1, 0.36, 1);
+      will-change: opacity, transform;
+    }
+
+    .anim-card.dropped {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Deep Solid Architectural Shadows (No Glass Blur) */
+    .hornette-card-shadow {
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.52), 0 4px 12px rgba(0, 0, 0, 0.32);
+    }
+
+    .solid-card-shadow {
+      box-shadow: 6px 6px 0px #141414;
+    }
+
+    /* Strict Non-Overlapping 12-Col x 2-Row Grid for Slides 2 & 3 */
+    .mosaic-grid-12x2 {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-rows: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Invisible 15% Left & Right Edge Navigation Zones (Zero Button Clutter) */
+    .edge-nav-zone {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 15vw;
+      z-index: 60;
+    }
+
+    .edge-left {
+      left: 0;
+      cursor: w-resize;
+    }
+
+    .edge-right {
+      right: 0;
+      cursor: e-resize;
+    }
+
+    .edge-nav-zone::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background-color: var(--hornette-yellow);
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .edge-left::after { left: 0; }
+    .edge-right::after { right: 0; }
+    .edge-nav-zone:hover::after { opacity: 0.85; }
+    .edge-nav-zone.disabled { pointer-events: none; }
+
+    /* Subtle 'Agas' Corner Watermark */
+    .agas-watermark {
+      position: fixed;
+      bottom: 14px;
+      right: 22px;
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 90;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.05rem;
+      letter-spacing: 0.16em;
+      color: #FFFFFF;
+    }
+
+    /* Animated Flame Cell Flicker */
+    @keyframes flameFlicker {
+      0%, 100% { transform: scaleY(1) skewX(0deg); }
+      25% { transform: scaleY(1.08) skewX(6deg); }
+      50% { transform: scaleY(0.94) skewX(-5deg); }
+      75% { transform: scaleY(1.06) skewX(4deg); }
+    }
+
+    .flame-tuft {
+      transform-origin: 50% 25%;
+      animation: flameFlicker 0.65s infinite ease-in-out;
+    }
+
+    /* Cut Corner Hornette Patch */
+    .cut-corner-patch {
+      clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+    }
+
+    /* =====================================================================
+       FINALE BLAST ANIMATIONS (SCREEN SHAKE, COMIC FLASH & SLAM CARD)
+       ===================================================================== */
+    @keyframes screenShake {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      15% { transform: translate(-16px, -10px) rotate(-1.5deg); }
+      30% { transform: translate(16px, 12px) rotate(1.5deg); }
+      45% { transform: translate(-14px, 8px) rotate(-1.2deg); }
+      60% { transform: translate(14px, -10px) rotate(1.2deg); }
+      75% { transform: translate(-10px, 6px) rotate(-0.8deg); }
+      90% { transform: translate(8px, -4px) rotate(0.5deg); }
+    }
+
+    .shaking {
+      animation: screenShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes impactFlashAnim {
+      0% { opacity: 1; background-color: #F5C731; }
+      35% { opacity: 0.92; background-color: #FFFFFF; }
+      70% { opacity: 0.65; background-color: #1E1E1E; }
+      100% { opacity: 0; pointer-events: none; }
+    }
+
+    .flash-active {
+      animation: impactFlashAnim 0.48s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =====================================================================
+       INVISIBLE 15% LEFT & RIGHT EDGE NAVIGATION ZONES (NO BUTTONS)
+       ===================================================================== -->
+  <div id="edgePrev" class="edge-nav-zone edge-left disabled" onclick="prevSlide()" title="Previous Slide (Click Left 15% Edge)"></div>
+  <div id="edgeNext" class="edge-nav-zone edge-right" onclick="nextSlide()" title="Next Slide (Click Right 15% Edge)"></div>
+
+  <!-- Minimal Slide Indicator Badge (Top Right) -->
+  <div class="fixed top-3.5 right-5 z-50 pointer-events-none flex items-center gap-2">
+    <span id="slideBadge" class="font-mono-tech text-[11px] font-bold tracking-[0.22em] px-2.5 py-1 bg-[#1E1E1E] text-[#F5C731] border border-[#F5C731]/50">
+      01 / 03
+    </span>
+  </div>
+
+  <!-- Subtle Fixed Corner Watermark -->
+  <div class="agas-watermark">Agas</div>
+
+  <!-- =====================================================================
+       PURE FULL-SCREEN BLAST ANIMATION (NO POPUP CARD, TRANSPARENT CANVAS)
+       ===================================================================== -->
+  <div id="impactFlash" class="fixed inset-0 z-[95] pointer-events-none opacity-0"></div>
+  <canvas id="blastCanvas" class="fixed inset-0 w-full h-full z-[100] pointer-events-none"></canvas>
+
+  <!-- =====================================================================
+       3-SLIDE PRESENTATION DECK (100VW x 100VH LOCKED)
+       ===================================================================== -->
+  <main id="deckMain" class="deck-viewport">
+
+    <!-- ===================================================================
+         SLIDE 1: EXACT "HORNETTE" REFERENCE COVER
+         =================================================================== -->
+    <section id="slide-0" class="slide active bg-[#303030] flex flex-col items-center justify-between pt-[4vh] pb-0">
+      
+      <!-- TOP HEADER BLOCK (Hornette Title + Yellow Ribbon Bar) -->
+      <div class="w-full flex flex-col items-center text-center z-30 px-4 shrink-0">
+        <h1 class="anim-card font-display text-white font-black uppercase tracking-[0.18em] leading-none"
+            style="font-size: clamp(2.3rem, 5.2vw, 4.9rem);">
+          PLATYHELMINTHES
+        </h1>
+
+        <div class="anim-card mt-[1.6vh] bg-[#F5C731] px-7 sm:px-14 py-2 sm:py-2.5 hornette-card-shadow">
+          <p class="font-display text-[#1E1E1E] font-extrabold uppercase tracking-[0.34em] sm:tracking-[0.44em] text-xs sm:text-sm md:text-base whitespace-nowrap">
+            AGASTIYA K V &nbsp;•&nbsp; CLASS 11-B
+          </p>
+        </div>
+      </div>
+
+      <!-- BOTTOM 64% COLLAGE STAGE: 6 OVERLAPPING HORNETTE PORTFOLIO CARDS -->
+      <div class="collage-stage relative w-full max-w-[1360px] h-[64vh] mx-auto mt-[1.5vh] shrink-0">
+
+        <!-- CARD 1: Top-Left Yellow Brand Manual Card (IMG_1) -->
+        <div class="anim-card absolute left-[10%] top-[6%] w-[31%] h-[44%] bg-[#F5C731] p-4 sm:p-5 hornette-card-shadow z-10 flex flex-col justify-between">
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="w-5 h-0.5 bg-[#1E1E1E] mb-1"></div>
+              <p class="font-display text-[#1E1E1E] font-extrabold text-sm sm:text-base leading-tight">
+                Dorso-Ventral<br/>Blueprint
+              </p>
+            </div>
+            <div class="flex items-end gap-1">
+              <span class="w-1 h-2.5 bg-[#1E1E1E]"></span>
+              <span class="w-1 h-4 bg-[#1E1E1E]"></span>
+              <span class="w-1 h-3 bg-[#1E1E1E]"></span>
+            </div>
+          </div>
+
+          <div class="relative w-full h-[64%] bg-[#1E1E1E] overflow-hidden border-2 border-[#1E1E1E]">
+            <img
+              src="https://cdn0.thedailyeco.com/en/posts/6/8/9/platyhelminthes_characteristics_and_examples_986_1200.jpg"
+              alt="Platyhelminthes Characteristics & Examples"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute bottom-1.5 right-1.5 bg-[#1E1E1E] text-[#F5C731] font-mono-tech text-[9px] font-bold px-2 py-0.5 uppercase">
+              FLATWORM MORPHOLOGY
+            </span>
+          </div>
+        </div>
+
+        <!-- CARD 2: Top-Center Dark Spotlight Card (IMG_8 Scolex + 5 Hornette Yellow Bars) -->
+        <div class="anim-card absolute left-[39%] top-[0%] w-[33%] h-[44%] bg-[#141414] hornette-card-shadow z-40 overflow-hidden border border-white/15">
+          <img
+            src="https://cached.imagescaler.hbpl.co.uk/resize/scaleWidth/815/cached.offlinehbpl.hbpl.co.uk/news/PGH/C0039754_cdp-20140313034603852.png"
+            alt="Tapeworm Scolex Micrograph with Hooks and Suckers"
+            class="w-full h-full object-cover contrast-125 opacity-85"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/50"></div>
+
+          <div class="absolute top-3 left-4 font-display text-[10px] font-extrabold tracking-[0.2em] text-white uppercase">
+            SCOLEX <span class="text-[#F5C731]">• HOOKS &amp; SUCKERS</span>
+          </div>
+
+          <!-- Signature 5 Vertical Yellow Pill Bars from Hornette Reference -->
+          <div class="absolute inset-0 flex items-center justify-center gap-3 pt-3">
+            <div class="w-3 h-7 bg-white rounded-full shadow"></div>
+            <div class="w-3 h-16 bg-gradient-to-b from-white via-[#F5C731] to-[#F5C731] rounded-full shadow"></div>
+            <div class="w-3 h-20 bg-gradient-to-b from-white via-[#F5C731] to-[#F5C731] rounded-full shadow"></div>
+            <div class="w-3 h-16 bg-gradient-to-b from-white via-[#F5C731] to-[#F5C731] rounded-full shadow"></div>
+            <div class="w-3 h-9 bg-white rounded-full shadow"></div>
+          </div>
+
+          <div class="absolute bottom-2.5 right-3 font-mono-tech text-[9px] text-[#F5C731] font-bold tracking-widest uppercase">
+            ENDOPARASITIC ANCHOR
+          </div>
+        </div>
+
+        <!-- CARD 3: Middle-Left White Editorial Card (IMG_3 Blue Flatworm + Oversized Yellow "B") -->
+        <div class="anim-card absolute left-[4%] top-[40%] w-[34%] h-[45%] bg-white text-[#1E1E1E] p-4 hornette-card-shadow z-30 flex flex-col justify-between">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-1 bg-[#F5C731] inline-block"></span>
+            <span class="font-display text-xs font-extrabold">Bilateral <span class="text-[#D99B00]">Symmetry</span></span>
+          </div>
+
+          <div class="grid grid-cols-12 gap-2.5 my-auto items-center">
+            <div class="col-span-7 relative h-24 sm:h-28 bg-[#1E1E1E] overflow-hidden">
+              <img
+                src="https://oneworldoneocean.com/wp-content/uploads/2020/07/BlueZooFlatwormThumbnail.jpg"
+                alt="Blue Marine Flatworm"
+                class="w-full h-full object-cover"
+              />
+              <span class="font-display absolute left-2 top-1/2 -translate-y-1/2 text-[#F5C731] font-black text-5xl sm:text-6xl leading-none opacity-95 select-none drop-shadow">
+                B
+              </span>
+            </div>
+
+            <div class="col-span-5 flex flex-col justify-between h-24 sm:h-28">
+              <p class="text-[10px] font-bold text-right leading-tight text-[#1E1E1E]">
+                Triploblastic &amp;<br/>
+                <span class="text-[#D99B00] font-extrabold">"acoelomate"</span><br/>
+                organ-level body
+              </p>
+              <div class="grid grid-cols-2 gap-1 h-12 bg-[#F6F4EE] p-1 border border-black/15">
+                <div class="bg-[#1E1E1E] flex flex-col items-center justify-center text-white">
+                  <span class="font-mono-tech font-extrabold text-[10px] text-[#F5C731]">3</span>
+                  <span class="text-[7px] uppercase font-bold">LAYERS</span>
+                </div>
+                <div class="bg-[#F5C731] flex flex-col items-center justify-center text-[#1E1E1E]">
+                  <span class="font-mono-tech font-extrabold text-[10px]">0</span>
+                  <span class="text-[7px] uppercase font-bold">COELOM</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="text-[9px] text-gray-600 font-semibold leading-tight">
+            Mirror-image left and right halves with distinct organ-level organisation and flame cells.
+          </p>
+        </div>
+
+        <!-- CARD 4: Middle-Right Split Yellow/Photo Card (IMG_6 Pseudobiceros hancockanus) -->
+        <div class="anim-card absolute left-[55%] top-[33%] w-[36%] h-[39%] bg-white text-[#1E1E1E] hornette-card-shadow z-20 p-2.5">
+          <div class="relative w-full h-full overflow-hidden flex">
+            <img
+              src="https://theoceanexplained.wordpress.com/wp-content/uploads/2021/06/p.hancockanus.jpg?w=825&h=510&crop=1"
+              alt="Pseudobiceros hancockanus Flatworm"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+            <div class="relative z-10 w-[56%] h-full bg-[#F5C731]/90 p-3.5 flex flex-col justify-center">
+              <h3 class="font-display text-xs sm:text-sm font-black text-[#1E1E1E] uppercase">
+                Flatworm <span class="font-semibold">Form</span>
+              </h3>
+              <p class="text-[10px] text-[#1E1E1E] font-bold mt-1 leading-snug">
+                Dorso-ventrally flattened ribbon &amp; leaf-like bodies with high regeneration.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 5: Bottom-Center Dark Frame Card (IMG_4 Taenia Tapeworm) -->
+        <div class="anim-card absolute left-[33%] top-[55%] w-[31%] h-[39%] bg-[#181818] text-white hornette-card-shadow z-25 overflow-hidden border border-white/15">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWL_FxdmkEqKVAu4mTBSze0WnbJhcySsth85Eb5hgGf1veyHcutbOeeDjC&s=10"
+            alt="Taenia Tapeworm Specimen"
+            class="w-full h-full object-cover opacity-75"
+          />
+          <div class="absolute inset-0 bg-black/45"></div>
+
+          <div class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+            <p class="font-display text-xs font-extrabold tracking-wide mb-2 uppercase">
+              Example <span class="text-[#F5C731]">Taenia</span>
+            </p>
+            <div class="w-[86%] border border-white/85 px-3 py-2 bg-black/65">
+              <p class="font-display text-[11px] font-extrabold text-white uppercase">
+                Tapeworm
+              </p>
+              <p class="font-mono-tech text-[9px] text-[#F5C731] mt-0.5 font-bold">
+                DIRECT SURFACE ABSORPTION
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 6: Bottom-Right White/Yellow Patch Card (IMG_5 Fasciola hepatica) -->
+        <div class="anim-card absolute left-[62%] top-[59%] w-[34%] h-[38%] bg-white text-[#1E1E1E] p-3 hornette-card-shadow z-30 flex flex-col justify-between">
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2.5 h-1 bg-[#F5C731] inline-block"></span>
+            <span class="font-display text-xs font-extrabold">Fasciola <span class="text-[#D99B00] font-semibold">Liver Fluke</span></span>
+          </div>
+
+          <div class="relative w-full h-full overflow-hidden bg-[#1E1E1E]">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/3/30/Fasciola_hepatica.JPG?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original"
+              alt="Fasciola hepatica Liver Fluke"
+              class="w-full h-full object-cover"
+            />
+            <div class="cut-corner-patch absolute right-2.5 top-1/2 -translate-y-1/2 w-[56%] bg-[#F5C731] p-2.5 text-[#1E1E1E] shadow-xl">
+              <p class="font-display text-[10px] font-black uppercase text-center">
+                Liver Fluke
+              </p>
+              <p class="text-[8.5px] font-bold leading-tight mt-0.5 text-center">
+                Endoparasite with oral &amp; ventral suckers for host attachment.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 2: BODY ARCHITECTURE & PARASITIC HARDWARE (12-COL x 2-ROW MOSAIC)
+         =================================================================== -->
+    <section id="slide-1" class="slide bg-[#2B2B2B] flex flex-col justify-between p-[2.8vh_3.2vw]">
+      
+      <!-- COMPACT EDITORIAL HEADER BAR -->
+      <header class="anim-card flex items-center justify-between border-b-2 border-white/15 pb-[1.4vh] mb-[1.8vh] shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-xs font-extrabold px-3 py-1 uppercase tracking-wider">
+            SLIDE 02 // MORPHOLOGY &amp; PARASITISM
+          </span>
+          <h2 class="font-display text-white text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight">
+            BODY ARCHITECTURE &amp; <span class="text-[#F5C731]">HOST ADAPTATION</span>
+          </h2>
+        </div>
+        <span class="hidden md:inline-block font-mono-tech text-xs text-white/60 uppercase tracking-widest">
+          PHYLUM PLATYHELMINTHES
+        </span>
+      </header>
+
+      <!-- STRICT 12-COLUMN x 2-ROW NON-OVERLAPPING MOSAIC GRID -->
+      <div class="mosaic-grid-12x2">
+
+        <!-- ROW 1, COL 1-4: Point 01 (Yellow Card - Dorso-Ventrally Flattened) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#F5C731] text-[#1E1E1E] p-4 sm:p-5 border-2 border-[#1E1E1E] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#1E1E1E] text-[#F5C731] font-mono-tech text-xs font-extrabold px-2.5 py-1 uppercase">
+              01 / BODY SHAPE
+            </span>
+            <span class="font-mono-tech text-xs font-extrabold uppercase tracking-wider">
+              FLATWORMS
+            </span>
+          </div>
+
+          <div class="my-auto">
+            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-black uppercase leading-tight">
+              Dorso-Ventrally Flattened Body
+            </h3>
+            <p class="text-xs sm:text-sm font-bold text-[#1E1E1E]/90 mt-2 leading-relaxed">
+              Their body is compressed thin from top (dorsal) to bottom (ventral) like a leaf or ribbon — <strong>hence they are called Flatworms</strong>.
+            </p>
+          </div>
+
+          <div class="bg-[#1E1E1E] text-[#F5C731] px-3 py-1.5 font-mono-tech text-[10px] font-bold uppercase tracking-wider">
+            HIGH SURFACE-TO-VOLUME RATIO FOR DIFFUSION
+          </div>
+        </article>
+
+        <!-- ROW 1, COL 5-8: Visual Split Card (IMG_3 Blue Flatworm + IMG_2 Anatomy Diagram) -->
+        <article class="anim-card col-span-4 row-span-1 bg-white text-[#1E1E1E] p-2.5 border-2 border-[#1E1E1E] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="grid grid-cols-2 gap-2 h-[82%] min-h-0">
+            <div class="relative h-full bg-[#1E1E1E] overflow-hidden">
+              <img
+                src="https://oneworldoneocean.com/wp-content/uploads/2020/07/BlueZooFlatwormThumbnail.jpg"
+                alt="Blue Marine Flatworm Symmetry"
+                class="w-full h-full object-cover"
+              />
+              <span class="absolute bottom-1.5 left-1.5 bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-[9px] font-extrabold px-1.5 py-0.5 uppercase">
+                LIVE SPECIMEN
+              </span>
+            </div>
+            <div class="relative h-full bg-[#F6F4EE] overflow-hidden border border-black/10">
+              <img
+                src="https://i.pinimg.com/736x/4b/82/4b/4b824b43f92f5128ace608c726c7594e.jpg"
+                alt="Flatworm Anatomy Diagram"
+                class="w-full h-full object-contain p-1"
+              />
+              <span class="absolute bottom-1.5 right-1.5 bg-[#1E1E1E] text-white font-mono-tech text-[9px] font-bold px-1.5 py-0.5 uppercase">
+                BODY PLAN
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between px-1 pt-1">
+            <span class="font-display text-xs font-black uppercase text-[#1E1E1E]">
+              BILATERAL MIRROR PLANE
+            </span>
+            <span class="bg-[#E05A47] text-white font-mono-tech text-[10px] font-bold px-2 py-0.5 uppercase">
+              FIG 4.9 REFERENCE
+            </span>
+          </div>
+        </article>
+
+        <!-- ROW 1, COL 9-12: Point 02 (Dark Charcoal Card - Bilateral, Triploblastic & Acoelomate) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#1E1E1E] text-white p-4 sm:p-5 border-2 border-[#F5C731] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-xs font-extrabold px-2.5 py-1 uppercase">
+              02 / ORGANISATION
+            </span>
+            <span class="font-mono-tech text-xs font-bold text-[#F5C731] uppercase">
+              ORGAN LEVEL
+            </span>
+          </div>
+
+          <div class="my-auto">
+            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-black uppercase leading-tight text-[#F5C731]">
+              Bilateral, Triploblastic &amp; Acoelomate
+            </h3>
+            <p class="text-xs sm:text-sm font-medium text-gray-200 mt-2 leading-relaxed">
+              Identical left/right mirror halves (<strong>bilaterally symmetrical</strong>), built from <strong>3 germ layers</strong> (triploblastic), lacking a body cavity (<strong>acoelomate</strong>), with <strong>organ level of organisation</strong>.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1.5 pt-1 font-mono-tech text-[10px] font-bold text-center">
+            <span class="bg-white/10 text-white py-1">ECTODERM</span>
+            <span class="bg-[#E05A47] text-white py-1">MESODERM</span>
+            <span class="bg-[#F5C731] text-[#1E1E1E] py-1">ENDODERM</span>
+          </div>
+        </article>
+
+        <!-- ROW 2, COL 1-4: Visual Scolex Card (IMG_8 Armed Tapeworm Scolex) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#181818] text-white p-2.5 border-2 border-[#E05A47] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="relative w-full h-[80%] bg-black overflow-hidden">
+            <img
+              src="https://cached.imagescaler.hbpl.co.uk/resize/scaleWidth/815/cached.offlinehbpl.hbpl.co.uk/news/PGH/C0039754_cdp-20140313034603852.png"
+              alt="Tapeworm Scolex Hooks and Suckers"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute top-2 left-2 bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-[10px] font-extrabold px-2.5 py-1 uppercase">
+              HOOKS &amp; 4 SUCKERS
+            </span>
+          </div>
+
+          <div class="flex items-center justify-between px-1 pt-1">
+            <div>
+              <p class="font-display text-xs font-extrabold uppercase text-[#F5C731]">
+                PARASITIC SCOLEX HARDWARE
+              </p>
+              <p class="text-[10px] text-gray-300 font-medium">
+                Anchors firmly to host intestinal wall
+              </p>
+            </div>
+            <span class="bg-[#E05A47] text-white font-mono-tech text-[10px] font-bold px-2 py-0.5 uppercase">
+              SEM VIEW
+            </span>
+          </div>
+        </article>
+
+        <!-- ROW 2, COL 5-8: Point 03 (Warm Off-White Editorial Card - Endoparasitic Lifestyle) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#F6F4EE] text-[#1E1E1E] p-4 sm:p-5 border-2 border-[#1E1E1E] border-t-8 border-t-[#E05A47] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#E05A47] text-white font-mono-tech text-xs font-extrabold px-2.5 py-1 uppercase">
+              03 / PARASITISM
+            </span>
+            <span class="font-mono-tech text-xs font-extrabold text-[#E05A47] uppercase">
+              HOST SURVIVAL
+            </span>
+          </div>
+
+          <div class="my-auto">
+            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-black uppercase leading-tight text-[#1E1E1E]">
+              Endoparasites, Hooks &amp; Surface Uptake
+            </h3>
+            <p class="text-xs sm:text-sm font-semibold text-[#1E1E1E]/90 mt-2 leading-relaxed">
+              Mostly <strong>endoparasites found in animals including human beings</strong>. Equipped with <strong>hooks and suckers</strong>, and some <strong>absorb nutrients from the host directly through their body surface</strong>.
+            </p>
+          </div>
+
+          <div class="bg-[#1E1E1E] text-[#F5C731] px-3 py-1.5 font-mono-tech text-[10px] font-bold uppercase">
+            ANCHOR HARDWARE + TEGUMENT ABSORPTION
+          </div>
+        </article>
+
+        <!-- ROW 2, COL 9-12: Visual Overview + Triploblastic Acoelomate SVG Cross-Section (IMG_1) -->
+        <article class="anim-card col-span-4 row-span-1 bg-white text-[#1E1E1E] p-2.5 border-2 border-[#1E1E1E] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="grid grid-cols-12 gap-2 h-[80%] min-h-0">
+            <div class="col-span-7 relative h-full bg-[#1E1E1E] overflow-hidden">
+              <img
+                src="https://cdn0.thedailyeco.com/en/posts/6/8/9/platyhelminthes_characteristics_and_examples_986_1200.jpg"
+                alt="Platyhelminthes Overview"
+                class="w-full h-full object-cover"
+              />
+            </div>
+
+            <!-- Interactive/Animated SVG Acoelomate Cross-Section -->
+            <div class="col-span-5 bg-[#1E1E1E] text-white p-2 flex flex-col items-center justify-between">
+              <span class="font-mono-tech text-[9px] text-[#F5C731] font-bold uppercase tracking-wider">
+                ACOELOMATE SECTION
+              </span>
+              <svg viewBox="0 0 120 80" class="w-full h-20">
+                <!-- Ectoderm outer ring -->
+                <ellipse cx="60" cy="40" rx="52" ry="30" fill="#38BDF8" stroke="#FFFFFF" stroke-width="2"/>
+                <!-- Solid Mesoderm Parenchyma (No Coelom) -->
+                <ellipse cx="60" cy="40" rx="40" ry="21" fill="#E05A47"/>
+                <!-- Endoderm Gut Lumen -->
+                <ellipse cx="60" cy="40" rx="18" ry="9" fill="#F5C731" stroke="#1E1E1E" stroke-width="2"/>
+                <ellipse cx="60" cy="40" rx="8" ry="4" fill="#1E1E1E"/>
+              </svg>
+              <span class="font-mono-tech text-[8.5px] text-center text-gray-300 leading-tight">
+                Solid Mesoderm<br/>(Zero Body Cavity)
+              </span>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between px-1 pt-1">
+            <span class="font-display text-xs font-black uppercase text-[#1E1E1E]">
+              TRIPLOBLASTIC SOLID PLAN
+            </span>
+            <span class="bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-[10px] font-extrabold px-2 py-0.5 uppercase">
+              NO COELOM
+            </span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         SLIDE 3: EXCRETION, REPRODUCTION, REGENERATION & EXAMPLES (12-COL x 2-ROW)
+         =================================================================== -->
+    <section id="slide-2" class="slide bg-[#242424] flex flex-col justify-between p-[2.8vh_3.2vw]">
+
+      <!-- COMPACT EDITORIAL HEADER BAR -->
+      <header class="anim-card flex items-center justify-between border-b-2 border-white/15 pb-[1.4vh] mb-[1.8vh] shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-xs font-extrabold px-3 py-1 uppercase tracking-wider">
+            SLIDE 03 // PHYSIOLOGY &amp; LIFE CYCLE
+          </span>
+          <h2 class="font-display text-white text-xl sm:text-2xl lg:text-3xl font-black uppercase tracking-tight">
+            FLAME CELLS, REPRODUCTION &amp; <span class="text-[#F5C731]">SPECIMENS</span>
+          </h2>
+        </div>
+        <span class="hidden md:inline-block font-mono-tech text-xs text-[#F5C731] uppercase tracking-widest">
+          TAENIA &amp; FASCIOLA
+        </span>
+      </header>
+
+      <!-- STRICT 12-COLUMN x 2-ROW NON-OVERLAPPING MOSAIC GRID -->
+      <div class="mosaic-grid-12x2">
+
+        <!-- ROW 1, COL 1-4: Point 01 (White Editorial Card + Animated Flame Cell SVG) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#F6F4EE] text-[#1E1E1E] p-4 sm:p-5 border-2 border-[#1E1E1E] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#1E1E1E] text-[#F5C731] font-mono-tech text-xs font-extrabold px-2.5 py-1 uppercase">
+              01 / EXCRETION
+            </span>
+            <!-- Compact Animated Flickering Flame Cell Graphic -->
+            <div class="flex items-center gap-2 bg-[#1E1E1E] px-2.5 py-1">
+              <svg viewBox="0 0 36 36" class="w-6 h-6">
+                <path d="M8 10 Q18 2 28 10 L24 32 L12 32 Z" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                <g class="flame-tuft">
+                  <path d="M18 8 C14 15, 22 20, 18 28" stroke="#F5C731" stroke-width="2.5" fill="none"/>
+                  <path d="M14 10 C12 17, 17 22, 15 27" stroke="#E05A47" stroke-width="2" fill="none"/>
+                  <path d="M22 10 C24 17, 19 22, 21 27" stroke="#E05A47" stroke-width="2" fill="none"/>
+                </g>
+              </svg>
+              <span class="font-mono-tech text-[10px] font-bold text-[#F5C731] uppercase">FLICKERING CILIA</span>
+            </div>
+          </div>
+
+          <div class="my-auto">
+            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-black uppercase leading-tight text-[#1E1E1E]">
+              Specialised Flame Cells
+            </h3>
+            <p class="text-xs sm:text-sm font-semibold text-[#1E1E1E]/90 mt-2 leading-relaxed">
+              <strong>Specialised cells called flame cells help in osmoregulation and excretion</strong>, using beating ciliary tufts to propel excess water and nitrogenous waste into excretory ducts.
+            </p>
+          </div>
+
+          <div class="bg-[#E05A47] text-white px-3 py-1.5 font-mono-tech text-[10px] font-bold uppercase">
+            PROTONEPHRIDIA • WATER &amp; ION BALANCE
+          </div>
+        </article>
+
+        <!-- ROW 1, COL 5-8: Point 02 (Hornette Yellow Card - Reproduction & Larval Stages) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#F5C731] text-[#1E1E1E] p-4 sm:p-5 border-2 border-[#1E1E1E] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#1E1E1E] text-[#F5C731] font-mono-tech text-xs font-extrabold px-2.5 py-1 uppercase">
+              02 / LIFE CYCLE
+            </span>
+            <span class="font-mono-tech text-xs font-extrabold uppercase">
+              MONOECIOUS ⚥
+            </span>
+          </div>
+
+          <div class="my-auto">
+            <h3 class="font-display text-lg sm:text-xl lg:text-2xl font-black uppercase leading-tight text-[#1E1E1E]">
+              Hermaphrodite &amp; Larval Stages
+            </h3>
+            <p class="text-xs sm:text-sm font-bold text-[#1E1E1E]/95 mt-2 leading-relaxed">
+              <strong>Sexes are not separate</strong> (hermaphroditic). <strong>Fertilisation is internal</strong> and indirect <strong>development is through many larval stages</strong> across one or more hosts.
+            </p>
+          </div>
+
+          <div class="bg-[#1E1E1E] text-[#F5C731] px-3 py-1.5 font-mono-tech text-[10px] font-bold uppercase">
+            INTERNAL FERTILISATION • MULTI-LARVAL DEVELOPMENT
+          </div>
+        </article>
+
+        <!-- ROW 1, COL 9-12: Point 03 (Dark Charcoal + Coral Card with IMG_7 & IMG_6 - Planaria Regeneration) -->
+        <article class="anim-card col-span-4 row-span-1 bg-[#1E1E1E] text-white p-3.5 sm:p-4 border-2 border-[#E05A47] solid-card-shadow flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="bg-[#E05A47] text-white font-mono-tech text-xs font-extrabold px-2.5 py-0.5 uppercase">
+              03 / REGENERATION
+            </span>
+            <span class="font-mono-tech text-[11px] font-bold text-[#F5C731] uppercase">
+              PLANARIA
+            </span>
+          </div>
+
+          <div>
+            <h3 class="font-display text-base sm:text-lg font-black uppercase leading-tight text-[#F5C731]">
+              High Regeneration Capacity
+            </h3>
+            <p class="text-xs font-medium text-gray-200 mt-1 leading-snug">
+              <strong>Some members like <em>Planaria</em> possess high regeneration capacity</strong>, regrowing complete organisms from cut fragments.
+            </p>
+          </div>
+
+          <!-- Dual Visual Strip: IMG_7 & IMG_6 -->
+          <div class="grid grid-cols-2 gap-2 h-[42%] min-h-0 pt-1">
+            <div class="relative h-full bg-black overflow-hidden border border-white/20">
+              <img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSU9QvxL2pwxlXDtzDM4m9sh1Wj7acoLjXrM7eAaSNpiTayO8If5Yf6m5dX&s=10"
+                alt="Planaria Specimen"
+                class="w-full h-full object-cover"
+              />
+              <span class="absolute bottom-1 left-1 bg-[#E05A47] text-white font-mono-tech text-[8px] font-bold px-1.5 py-0.5 uppercase">
+                PLANARIA
+              </span>
+            </div>
+            <div class="relative h-full bg-black overflow-hidden border border-white/20">
+              <img
+                src="https://theoceanexplained.wordpress.com/wp-content/uploads/2021/06/p.hancockanus.jpg?w=825&h=510&crop=1"
+                alt="Free-living Flatworm"
+                class="w-full h-full object-cover"
+              />
+              <span class="absolute bottom-1 left-1 bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-[8px] font-bold px-1.5 py-0.5 uppercase">
+                NEOBLASTS
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- ROW 2, COL 1-6: Large Specimen Showcase Card 1 — Taenia (Tapeworm) (IMG_4) -->
+        <article class="anim-card col-span-6 row-span-1 bg-white text-[#1E1E1E] border-2 border-[#1E1E1E] solid-card-shadow grid grid-cols-12 overflow-hidden min-h-0">
+          <div class="col-span-6 relative h-full bg-[#181818] overflow-hidden">
+            <img
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWL_FxdmkEqKVAu4mTBSze0WnbJhcySsth85Eb5hgGf1veyHcutbOeeDjC&s=10"
+              alt="Taenia Tapeworm"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute top-2.5 left-2.5 bg-[#F5C731] text-[#1E1E1E] font-mono-tech text-[10px] font-extrabold px-2.5 py-1 uppercase">
+              EXAMPLE 01
+            </span>
+          </div>
+
+          <div class="col-span-6 p-4 sm:p-5 flex flex-col justify-between bg-white">
+            <div>
+              <span class="font-mono-tech text-[10px] font-bold text-[#E05A47] uppercase tracking-wider">
+                CLASS CESTODA • ENDOPARASITE
+              </span>
+              <h3 class="font-display text-lg sm:text-2xl font-black uppercase leading-tight text-[#1E1E1E] mt-1">
+                <em>Taenia</em><br/>(Tapeworm)
+              </h3>
+              <p class="text-xs sm:text-sm font-semibold text-gray-700 mt-2 leading-relaxed">
+                Segmented ribbon-like intestinal parasite in humans; anchors with hooks &amp; suckers and <strong>absorbs host nutrients directly through its body surface</strong>.
+              </p>
+            </div>
+
+            <div class="bg-[#1E1E1E] text-[#F5C731] px-3 py-1.5 font-mono-tech text-[10px] font-bold uppercase">
+              HOST: HUMAN INTESTINE
+            </div>
+          </div>
+        </article>
+
+        <!-- ROW 2, COL 7-12: Large Specimen Showcase Card 2 — Fasciola (Liver Fluke) (IMG_5) -->
+        <article class="anim-card col-span-6 row-span-1 bg-[#F6F4EE] text-[#1E1E1E] border-2 border-[#1E1E1E] solid-card-shadow grid grid-cols-12 overflow-hidden min-h-0">
+          <div class="col-span-6 relative h-full bg-[#181818] overflow-hidden">
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/3/30/Fasciola_hepatica.JPG?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=original"
+              alt="Fasciola hepatica Liver Fluke"
+              class="w-full h-full object-cover"
+            />
+            <span class="absolute top-2.5 left-2.5 bg-[#E05A47] text-white font-mono-tech text-[10px] font-extrabold px-2.5 py-1 uppercase">
+              EXAMPLE 02
+            </span>
+          </div>
+
+          <div class="col-span-6 p-4 sm:p-5 flex flex-col justify-between bg-[#F6F4EE]">
+            <div>
+              <span class="font-mono-tech text-[10px] font-bold text-[#1E1E1E] uppercase tracking-wider">
+                CLASS TREMATODA • ENDOPARASITE
+              </span>
+              <h3 class="font-display text-lg sm:text-2xl font-black uppercase leading-tight text-[#1E1E1E] mt-1">
+                <em>Fasciola</em><br/>(Liver Fluke)
+              </h3>
+              <p class="text-xs sm:text-sm font-semibold text-gray-800 mt-2 leading-relaxed">
+                Dorso-ventrally flattened leaf-shaped parasite infecting the <strong>liver and bile ducts</strong> of vertebrates; attaches via muscular oral and ventral suckers.
+              </p>
+            </div>
+
+            <div class="bg-[#F5C731] text-[#1E1E1E] border border-[#1E1E1E] px-3 py-1.5 font-mono-tech text-[10px] font-extrabold uppercase">
+              HOST: LIVER &amp; BILE DUCTS
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =====================================================================
+       JAVASCRIPT PRESENTATION CONTROLLER & RELIABLE SEQUENTIAL DROP ENGINE
+       ===================================================================== -->
+  <script>
+    const totalSlides = 3;
+    let currentSlide = 0;
+    let activeTimers = [];
+    let blastActive = false;
+    let blastAnimFrame = null;
+    let particles = [];
+    let planariaWorms = [];
+
+    function clearDropTimers() {
+      while (activeTimers.length > 0) {
+        clearTimeout(activeTimers.pop());
+      }
+    }
+
+    function triggerSlideDropIn(slideIndex) {
+      clearDropTimers();
+
+      for (let i = 0; i < totalSlides; i++) {
+        const slideEl = document.getElementById(`slide-${i}`);
+        if (!slideEl) continue;
+
+        const cards = slideEl.querySelectorAll('.anim-card');
+        if (i === slideIndex) {
+          slideEl.classList.add('active');
+          // Reset cards first so they always drop in fresh one-by-one
+          cards.forEach((card) => card.classList.remove('dropped'));
+
+          cards.forEach((card, idx) => {
+            const timerId = setTimeout(() => {
+              card.classList.add('dropped');
+            }, 130 + idx * 125);
+            activeTimers.push(timerId);
+          });
+        } else {
+          slideEl.classList.remove('active');
+          cards.forEach((card) => card.classList.remove('dropped'));
+        }
+      }
+
+      // Update Top-Right Slide Counter
+      const badge = document.getElementById('slideBadge');
+      if (badge) {
+        badge.textContent = slideIndex === totalSlides - 1
+          ? `03 / 03 • CLICK NEXT FOR BLAST 💥`
+          : `0${slideIndex + 1} / 0${totalSlides}`;
+      }
+
+      // Keep Right Edge Active on Slide 3 so clicking it triggers the Finale Blast!
+      const edgePrev = document.getElementById('edgePrev');
+      const edgeNext = document.getElementById('edgeNext');
+      if (edgePrev) edgePrev.classList.toggle('disabled', slideIndex === 0);
+      if (edgeNext) edgeNext.classList.remove('disabled');
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides - 1) {
+        currentSlide++;
+        triggerSlideDropIn(currentSlide);
+      } else if (currentSlide === totalSlides - 1) {
+        // Trigger the pure full-screen blast explosion right over Slide 3!
+        triggerBlastFinale();
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        currentSlide--;
+        triggerSlideDropIn(currentSlide);
+      }
+    }
+
+    function goToSlide(index) {
+      if (index >= 0 && index < totalSlides && index !== currentSlide) {
+        currentSlide = index;
+        triggerSlideDropIn(currentSlide);
+      }
+    }
+
+    // =====================================================================
+    // FLATWORM REGENERATION BLAST FINALE ENGINE (PURE CANVAS + PHYSICS)
+    // =====================================================================
+    function spawnExplosionBatch(originX, originY, countScale = 1) {
+      const palette = ['#F5C731', '#E05A47', '#F6F4EE', '#1E1E1E', '#38BDF8'];
+
+      // 1. Spawn Confetti & Comic Shards
+      const confettiCount = Math.floor(110 * countScale);
+      for (let i = 0; i < confettiCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 6 + Math.random() * 22;
+        particles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 4,
+          w: 8 + Math.random() * 14,
+          h: 6 + Math.random() * 10,
+          color: palette[Math.floor(Math.random() * palette.length)],
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.28,
+          gravity: 0.28 + Math.random() * 0.15,
+          life: 1,
+          decay: 0.004 + Math.random() * 0.005
+        });
+      }
+
+      // 2. Spawn Flying Goofy-Eyed Cartoon Planaria Worms That Split Mid-Air!
+      const wormCount = Math.floor(14 * countScale);
+      for (let i = 0; i < wormCount; i++) {
+        const angle = -Math.PI * 0.85 + Math.random() * Math.PI * 0.7;
+        const speed = 9 + Math.random() * 15;
+        planariaWorms.push({
+          x: originX + (Math.random() - 0.5) * 80,
+          y: originY + (Math.random() - 0.5) * 60,
+          vx: Math.cos(angle) * speed + (Math.random() - 0.5) * 8,
+          vy: Math.sin(angle) * speed - 5,
+          rot: (Math.random() - 0.5) * 1.2,
+          vRot: (Math.random() - 0.5) * 0.12,
+          scale: 0.85 + Math.random() * 0.45,
+          color: i % 2 === 0 ? '#E05A47' : '#F5C731',
+          canSplit: true,
+          splitTimer: 22 + Math.floor(Math.random() * 24),
+          wigglePhase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function drawCartoonPlanaria(ctx, worm) {
+      ctx.save();
+      ctx.translate(worm.x, worm.y);
+      ctx.rotate(worm.rot + Math.sin(worm.wigglePhase) * 0.15);
+      ctx.scale(worm.scale, worm.scale);
+
+      // Dorso-ventrally flattened leaf-like Planaria body with auricles (ear flaps)
+      ctx.fillStyle = worm.color;
+      ctx.strokeStyle = '#1E1E1E';
+      ctx.lineWidth = 3;
+
+      ctx.beginPath();
+      ctx.moveTo(0, -28); // Triangular head tip
+      ctx.quadraticCurveTo(18, -20, 22, -12); // Right auricle ear
+      ctx.quadraticCurveTo(14, -8, 14, 6);
+      ctx.quadraticCurveTo(13, 24, 0, 32); // Tail tip
+      ctx.quadraticCurveTo(-13, 24, -14, 6);
+      ctx.quadraticCurveTo(-14, -8, -22, -12); // Left auricle ear
+      ctx.quadraticCurveTo(-18, -20, 0, -28);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // Goofy Crossed Eyespots (Photoreceptors)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(-6, -15, 5.2, 0, Math.PI * 2);
+      ctx.arc(6, -15, 5.2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Crossed pupils
+      ctx.fillStyle = '#1E1E1E';
+      ctx.beginPath();
+      ctx.arc(-4.2, -15, 2.5, 0, Math.PI * 2);
+      ctx.arc(4.2, -15, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Silly derpy smile
+      ctx.beginPath();
+      ctx.arc(0, -8, 4.5, 0.15 * Math.PI, 0.85 * Math.PI);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function renderBlastCanvas() {
+      const canvas = document.getElementById('blastCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Update & Draw Confetti Shards
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.vx *= 0.99;
+        p.rot += p.vRot;
+        p.life -= p.decay;
+
+        if (p.life <= 0 || p.y > canvas.height + 60) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.strokeStyle = '#1E1E1E';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      }
+
+      // Update & Draw Splitting Cartoon Planaria
+      for (let i = planariaWorms.length - 1; i >= 0; i--) {
+        const w = planariaWorms[i];
+        w.x += w.vx;
+        w.y += w.vy;
+        w.vy += 0.24;
+        w.rot += w.vRot;
+        w.wigglePhase += 0.35;
+        w.splitTimer--;
+
+        // Mid-Air Regeneration Split! One worm pops into TWO smaller Planaria!
+        if (w.canSplit && w.splitTimer === 0 && planariaWorms.length < 65) {
+          w.canSplit = false;
+          w.scale *= 0.78;
+          // Pop visual mini-sparks at split point
+          for (let s = 0; s < 8; s++) {
+            particles.push({
+              x: w.x,
+              y: w.y,
+              vx: (Math.random() - 0.5) * 10,
+              vy: (Math.random() - 0.5) * 10,
+              w: 6,
+              h: 6,
+              color: '#F5C731',
+              rot: 0,
+              vRot: 0.2,
+              gravity: 0.15,
+              life: 0.9,
+              decay: 0.03
+            });
+          }
+          // Clone second regenerated Planaria
+          planariaWorms.push({
+            x: w.x,
+            y: w.y,
+            vx: -w.vx * 0.85 + (Math.random() - 0.5) * 5,
+            vy: -5 - Math.random() * 4,
+            rot: w.rot + 0.5,
+            vRot: -w.vRot,
+            scale: w.scale,
+            color: w.color === '#E05A47' ? '#F5C731' : '#E05A47',
+            canSplit: false,
+            splitTimer: -1,
+            wigglePhase: w.wigglePhase + 1.5
+          });
+        }
+
+        if (w.y > canvas.height + 80) {
+          planariaWorms.splice(i, 1);
+          continue;
+        }
+
+        drawCartoonPlanaria(ctx, w);
+      }
+
+      if (particles.length > 0 || planariaWorms.length > 0) {
+        blastAnimFrame = requestAnimationFrame(renderBlastCanvas);
+      } else {
+        blastActive = false;
+        blastAnimFrame = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function triggerBlastFinale() {
+      blastActive = true;
+
+      const deckMain = document.getElementById('deckMain');
+      const flashEl = document.getElementById('impactFlash');
+
+      // 1. Trigger 450ms Screen-Shake & Comic Impact Flash
+      if (deckMain) {
+        deckMain.classList.remove('shaking');
+        void deckMain.offsetWidth;
+        deckMain.classList.add('shaking');
+      }
+      if (flashEl) {
+        flashEl.classList.remove('flash-active');
+        void flashEl.offsetWidth;
+        flashEl.classList.add('flash-active');
+      }
+
+      // 2. Launch Multi-Point Full-Screen Confetti & Splitting Planaria Explosion
+      spawnExplosionBatch(window.innerWidth * 0.5, window.innerHeight * 0.5, 1.35);
+
+      setTimeout(() => {
+        spawnExplosionBatch(window.innerWidth * 0.22, window.innerHeight * 0.45, 0.85);
+        spawnExplosionBatch(window.innerWidth * 0.78, window.innerHeight * 0.45, 0.85);
+      }, 160);
+
+      if (!blastAnimFrame) {
+        blastAnimFrame = requestAnimationFrame(renderBlastCanvas);
+      }
+    }
+
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    // Keyboard Navigation (ArrowRight / Space = Next, ArrowLeft = Prev, 1-3 = Jump, B = Blast, F = Fullscreen)
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'b' || e.key === 'B') {
+        e.preventDefault();
+        triggerBlastFinale();
+        return;
+      }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === '1') {
+        goToSlide(0);
+      } else if (e.key === '2') {
+        goToSlide(1);
+      } else if (e.key === '3') {
+        goToSlide(2);
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullScreen();
+      }
+    });
+
+    // Touch Swipe Support for Mobile/Tablets
+    let touchStartX = 0;
+    window.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    window.addEventListener('touchend', (e) => {
+      const delta = touchStartX - e.changedTouches[0].screenX;
+      if (Math.abs(delta) > 50) {
+        if (delta > 0) nextSlide();
+        else prevSlide();
+      }
+    }, { passive: true });
+
+    // Trigger Slide 1 Drop-In on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      triggerSlideDropIn(0);
+    });
+  </script>
+</body>
+</html>
